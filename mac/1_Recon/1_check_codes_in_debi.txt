@@ -1,0 +1,2 @@
+note: the calculation of coil sensitivity cannot work very well on the map calculation
+due to the bug. So please use debi from the first step.
