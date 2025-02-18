@@ -11,7 +11,9 @@ clc; clear;
 % ====================================================
 
 subject_num = 1;
-meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
+%
+% meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
+meas_name_suffix = '_MID00346_FID214642_BEAT_LIBREon_eye_HC_BC';
 meas_name = ['meas', meas_name_suffix];
 twix_name = ['twix', meas_name_suffix];
 twix_path =  ['/Users/cag/Documents/Dataset/250127_acquisition/', twix_name,'.mat'];
