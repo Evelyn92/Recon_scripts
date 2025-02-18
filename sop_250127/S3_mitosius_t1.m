@@ -13,7 +13,6 @@ clear; clc;
 subject_num = 1;
 datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
 reconDir = '/home/debi/yiwei/recon_results/250127_recon/';
-ETDir = ['/home/debi/yiwei/recon_results/250127_recon/', 'masks/'];
 
 if subject_num == 1
     datasetDir = [datasetDir, ''];
