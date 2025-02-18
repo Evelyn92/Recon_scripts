@@ -12,8 +12,8 @@ clc; clear;
 
 subject_num = 1;
 %
-% meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
-meas_name_suffix = '_MID00346_FID214642_BEAT_LIBREon_eye_HC_BC';
+meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
+% meas_name_suffix = '_MID00346_FID214642_BEAT_LIBREon_eye_HC_BC';
 meas_name = ['meas', meas_name_suffix];
 twix_name = ['twix', meas_name_suffix];
 twix_path =  ['/Users/cag/Documents/Dataset/250127_acquisition/', twix_name,'.mat'];
@@ -60,10 +60,16 @@ pmu_mark_table = pmu_ext_table;
 pmu_mark_table((pmu_ext_table.EXT1 == 0) & (pmu_ext_table.EXT2 == 0),:)=[];
 %%
 figure;
-plot(time_ms(1:1*1000), pmu_ext_table.EXT1(1:1*1000))
-%plot(time_ms(1:10*1000), pmu_ext_table.EXT2(1:10*1000))
-xlabel('time (ms)')
-ylabel('pulse amplitude')
+
+plot(time_ms, pmu_ext_table.EXT1, "LineWidth",2);
+hold on;
+plot(time_ms, pmu_ext_table.EXT2,"LineWidth",2);
+grid on;
+ax = gca; 
+ax.FontSize = 20;
+xlim([0, 10000])
+xlabel('Time (ms)','FontSize',24,'FontName','Times New Roman')
+ylabel('Pulse Amplitude','FontSize',24,'FontName','Times New Roman')
 %%
 % Example data
 t_ms = time_ms(:); % Time vector (in seconds)
@@ -80,12 +86,15 @@ disp(array2table([peaks_amp, locs_time_ms, locs_tp]))
 
 %% Plot
 figure;
-plot(t_ms, y, 'b'); hold on;
+plot(t_ms, y, 'LineWidth',2); hold on;
 plot(locs_time_ms, peaks_amp, 'ro', 'MarkerFaceColor', 'r'); % Mark peaks
-xlabel('Time (ms)');
-ylabel('Amplitude');
-title('Detected Peaks in Pulse Sequence');
+xlabel('Time (ms)','FontSize',24,'FontName','Times New Roman');
+ylabel('Pulse Amplitude','FontSize',24,'FontName','Times New Roman')
+title('Detected Peaks in Pulse Sequence', 'FontSize',24,'FontName','Times New Roman');
+xlim([0,10*1000])
 grid on;
+ax = gca; 
+ax.FontSize = 20;
 %%
 disp('check intervals between the triggers:')
 % diff(locs_time_ms)

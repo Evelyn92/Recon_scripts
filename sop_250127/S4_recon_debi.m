@@ -90,7 +90,7 @@ end
 
 %%
 
-x0Dir = [reconDir, '/Sub00',num2str(subject_num),'/T1_LIBRE_Binning/output/mask_',mask_note,'/'];
+x0Dir = [reconDir, '/Sub00',num2str(subject_num),'/T1_LIBRE_Binning/output/mask_', mask_note,'/'];
 
 if ~isfolder(x0Dir)
     % If it doesn't exist, create it
