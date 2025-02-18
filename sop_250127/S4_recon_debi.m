@@ -7,13 +7,15 @@ clear;clc;
 % Update: just for test before running on HPC
 % =====================================================
 
-% change woBinning/Binning, change th75->th0, change eyeMask name!
+
 
 %%
 subject_num = 1;
 datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
 reconDir = '/home/debi/yiwei/recon_results/250127_recon/';
-mask_note = 'th0.75_0p3';
+winLen = 3;
+th_ratio = 0.98;
+mask_note = sprintf('win%d_th%.2f_0p3',winLen, th_ratio);
 
 if subject_num == 1
     datasetDir = [datasetDir, ''];
@@ -118,11 +120,12 @@ rho       = 10*delta;
 nCGD      = 4;
 ve_max    = 10*prod(dK_u(:));
 if nFr<= 1
-
+    witness_info = bmWitnessInfo('stevaMorphosia_d0p1_r1_nCGD4', witness_ind);
+    witness_info.save_witnessIm_flag = true;
     x = bmSteva(  x0{1}, [], [], y{1}, ve{1}, C, Gu{1}, Gut{1}, n_u, ...
                                         delta, rho, nCGD, ve_max, ...
                                         nIter, ...
-                                        bmWitnessInfo('steva_d1_r10_nCGD4', witness_ind));
+                                        witness_info);
 else
     witness_info = bmWitnessInfo('tevaMorphosia_d0p1_r1_nCGD4', witness_ind);
     witness_info.save_witnessIm_flag = true;

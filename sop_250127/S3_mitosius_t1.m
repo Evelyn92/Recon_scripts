@@ -8,7 +8,7 @@ clear; clc;
 % Add a new txt file saved along side with the mask to log the details
 % =====================================================
 
-% change woBinning/Binning, change th75->th0, change eyeMask name!
+
 %%
 subject_num = 1;
 datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
@@ -98,7 +98,7 @@ FoV = p.FoV;  % Field of View
 % ==============================================
 % Warning: due to the memory limit, all the voxel_size set on debi
 % is always >= 1 to make sure the matrix size <=240
-voxel_size = 0.5;
+voxel_size = 1;
 % So the mitosius saved on debi
 % is the smaller than the full resolution.
 % ===============================================
@@ -143,8 +143,10 @@ end
 
 
 %% Set the folder for mitosius saving
+winLen = 3;
+th_ratio = 0.98;
+mask_note = sprintf('win%d_th%.2f_0p3',winLen, th_ratio);
 
-mask_note = 'th0.75_0p3';
 if subject_num == 1
     mDir = [reconDir, '/Sub001/T1_LIBRE_Binning/mitosius/mask_', mask_note, '/'];
 elseif subject_num == 2
@@ -155,10 +157,11 @@ else
     mDir = [reconDir, '/...', '...'];
 end
 %% Prepare eye mask
-th_ratio = 3/4;
-eMaskFilePath = [otherDir,sprintf('eMask_th%.2f_0p3.mat', th_ratio)];
+
+eMaskFilePath = [otherDir,sprintf('eMask_win%d_th%.2f_0p3.mat',winLen, th_ratio)];
 
 eyeMask = load(eMaskFilePath); 
+
 fields = fieldnames(eyeMask);  % Get the field names
 firstField = fields{1};  % Get the first field name
 eyeMask = eyeMask.(firstField);  % Access the first field's value

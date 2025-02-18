@@ -1,10 +1,17 @@
-% 1 manually drag the results and then use
+% =====================================================
+% Author: Yiwei Jia
+% Date: Feb 5
+% ------------------------------------------------
+% initial check the half-resolution result on debi
+% Update: concatenate bin with wobin, calculate the heatmap of difference
+% =====================================================
+%% 1 manually drag the results and then use
 % bmImage(x_bin);
 % bmImage(x_wobin);
 
 %% 2 roughly confirm roi
 % ctrl+shift+y
-x_dim = 100:180;
+x_dim = 120:180;
 y_dim = 70:170;
 z_dim= 90:150;
 x_bin_crop = x_bin(x_dim, y_dim, z_dim);
@@ -22,22 +29,24 @@ bmImage(x_diff_crop)
 slice_diff = sum(abs(x_diff_crop), [1, 2]); % Sum over rows & columns
 [sorted_diff, sorted_indices] = sort(slice_diff(:), 'descend'); % Sort in descending order 
 disp(sorted_indices')
-% 30    29    33    28    32    27    34    31 
+% 30    29    33    28    32    27    34    31 / win3 th0.75 cri0.3
+% 33    30    46    48    49    32    29    47    31 / win3 th0.98 cri0.3
 %% Compare slice_bin and slice_wobin
-i = 30;
+i = 33;
 slice_bin = x_bin_crop(:, :, i);
 slice_wobin = x_wobin_crop(:, :, i);
 compare_two_slices(slice_bin, 'bin', slice_wobin, 'wobin', ['Slice-',num2str(i) ])
-%% Norm each single slice and see any difference
-i = 30;
+% Norm each single slice and see any difference
+
 min_val = 0.00;  % Lower threshold
-max_val = 0.7;  % Upper threshold
+max_val = 0.8;  % Upper threshold
 
 slice_bin = x_bin_crop(:, :, i);
-norm_slice_mat(slice_bin, min_val, max_val, 'bin', true) %display_flag on
+slice_bin_norm=norm_slice_mat(slice_bin, min_val, max_val, 'bin', false); %display_flag on
 
 slice_wobin = x_wobin_crop(:, :, i);
-norm_slice_mat(slice_wobin, min_val, max_val, 'wobin', true)
+slice_wobin_norm=norm_slice_mat(slice_wobin, min_val, max_val, 'wobin', false);
+compare_two_slices(slice_bin_norm, 'bin', slice_wobin_norm, 'wobin', ['Norm Slice-',num2str(i) ])
 %%
 diff_map_plot(x_bin_crop, x_wobin_crop, 33)
 %%
@@ -46,7 +55,12 @@ function compare_two_slices(slice1, slice1_label, slice2, slice2_label, sg_label
     slice2 = mat2gray(abs(slice2));
     figure;sgtitle(sg_label)
     subplot(1,2,1); imshow(slice1, []); title(slice1_label);
+    colorcode = 'turbo';
+    colormap(colorcode);   % Apply Jet colormap
+    colorbar;          % Show color scale
     subplot(1,2,2); imshow(slice2, []); title(slice2_label);
+    colormap(colorcode);   % Apply Jet colormap
+    colorbar;          % Show color scale
 end
 
 function slice_redistributed = norm_slice_mat(org_slice, min_val, max_val, slice_label, display_flag)
@@ -61,10 +75,10 @@ slice_redistributed = (slice_I_clipped - min(slice_I_clipped(:))) / (max(slice_I
 
 if display_flag
     % Display the results
-    figure;sgtitle(slice_label)
+    figure;sgtitle(slice_label);
     subplot(1,2,1); imshow(slice_norm, []); title('Original Image');
     subplot(1,2,2); imshow(slice_redistributed, []); title('Clipped & Redistributed Image');
-
+    
 
     % figure;
     % subplot(1,2,1); imhist(slice_norm); title('Original Histogram');

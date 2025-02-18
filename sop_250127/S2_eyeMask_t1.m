@@ -45,7 +45,7 @@ else
 end
 
 %%
-th_ratio = 3/4;
+th_ratio = 0.98;
 nShotOff = 14; 
 nSeg = 22; 
 winLen = 3;
@@ -57,7 +57,7 @@ eMask = eyeGenerateBinningWin(datasetDir, nShotOff, nSeg,th_ratio, ETDir, winLen
 %save(fullfile(param.savedir,'cMask.mat'),'param');
 %disp(['param is saved here:', param.savedir, '\cMask.mat'])
 
-eMaskFilePath = [otherDir,sprintf('eMask_th%.2f_0p3.mat', th_ratio)];
+eMaskFilePath = [otherDir,sprintf('eMask_win%d_th%.2f_0p3.mat',winLen, th_ratio)];
 
 % Save the CMask to the .mat file
 save(eMaskFilePath, 'eMask');
@@ -66,7 +66,7 @@ disp(eMaskFilePath)
 
 %% save the log txt
 % Define the filename
-filename = [otherDir,sprintf('eMask_th%.2f_0p3.txt', th_ratio)];
+filename = [otherDir,sprintf('eMask_win%d_th%.2f_0p3.txt',winLen, th_ratio)];
 
 % Open the file for writing ('w' mode overwrites, 'a' appends)
 fid = fopen(filename, 'w');
@@ -79,6 +79,7 @@ end
 % Write some text to the file
 fprintf(fid, '.\n');
 fprintf(fid,['winLen: ', num2str(winLen), '.\n']);
+fprintf(fid,['threshold: ', num2str(th_ratio), '.\n']);
 fprintf(fid,['criteria: ', num2str(0.3), '.\n']);
 fprintf(fid, ['with Binning, preserved #line: ',num2str(sum(eMask)), ' out of ', num2str(length(eMask)), '.\n' ]);
 
