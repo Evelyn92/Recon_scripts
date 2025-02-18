@@ -155,7 +155,6 @@ else
     mDir = [reconDir, '/...', '...'];
 end
 %% Prepare eye mask
-th_ratio = 3/4;
 eMaskFilePath = [otherDir,'eMask_woBin'];
 
 eyeMask = load(eMaskFilePath); 
