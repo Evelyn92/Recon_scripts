@@ -29,11 +29,12 @@ x_diff_crop = x_bin_crop-x_wobin_crop;
 bmImage(x_diff_crop)
 slice_diff = sum(abs(x_diff_crop), [1, 2]); % Sum over rows & columns
 [sorted_diff, sorted_indices] = sort(slice_diff(:), 'descend'); % Sort in descending order 
-disp(sorted_indices')
+disp(sorted_indices(1:20)');
 %  95    64    94    57    91    58    59    62    87     / win3 th0.75 cri0.3
-
+%%
+diff_map_plot(x_bin_crop, x_wobin_crop, 62)
 %% Compare slice_bin and slice_wobin
-i = 65;
+i = 62;
 slice_bin = x_bin_crop(:, :, i);
 slice_wobin = x_wobin_crop(:, :, i);
 compare_two_slices(slice_bin, 'bin', slice_wobin, 'wobin', ['Slice-',num2str(i) ])
@@ -48,8 +49,7 @@ slice_bin_norm=norm_slice_mat(slice_bin, min_val, max_val, 'bin', false); %displ
 slice_wobin = x_wobin_crop(:, :, i);
 slice_wobin_norm=norm_slice_mat(slice_wobin, min_val, max_val, 'wobin', false);
 compare_two_slices(slice_bin_norm, 'bin', slice_wobin_norm, 'wobin', ['Norm Slice-',num2str(i) ])
-%%
-diff_map_plot(x_bin_crop, x_wobin_crop, 33)
+
 %%
 function compare_two_slices(slice1, slice1_label, slice2, slice2_label, sg_label)
     slice1 = mat2gray(abs(slice1));
@@ -101,6 +101,7 @@ imagesc(x1(:, :, slice_idx)); axis off; title('bin');
 colormap(ax1, gray); % Set colormap only for this subplot
 colorbar;
 ax2 = subplot(2, 2, 2);
+% imagesc
 imagesc(x2(:, :, slice_idx)); axis off; title('wobin');
 colormap(ax2, gray);
 colorbar;
