@@ -9,7 +9,7 @@
 volume_data = x;
 
 %% Replace with your desired output NIfTI file path
-nifti_folder = fullfile("/home/debi/yiwei/recon_results/250127_recon/", ...
+nifti_folder = fullfile("/Users/cag/Documents/Dataset/recon_results/250127_recon/", ...
     "Sub001/T1_LIBRE_Binning/output/mask_5s", ...
     'nii');       
 
@@ -26,12 +26,15 @@ nvolume = size(volume_data, 1);
 disp(['number of volumes: ',num2str(nvolume)]);
 %%
 for idx = 1:nvolume
-    vol_i = volume_data{idx};
+    vol_i = abs(volume_data{idx});
     % Define NIfTI metadata (optional but recommended for completeness)
     % You can adjust these properties according to your needs.
-
     % NifTi file for each volume
-    nifti_file = fullfile(nifti_folder, strcat('volume_', num2str(idx), '.nii'));
+    if idx<=9
+        nifti_file = fullfile(nifti_folder, strcat('volume_0', num2str(idx), '.nii'));
+    else
+        nifti_file = fullfile(nifti_folder, strcat('volume_', num2str(idx), '.nii'));
+    end
     niftiwrite(vol_i, nifti_file);
     disp(['NIfTI Data has been saved in folder: ', nifti_file]);
 end
