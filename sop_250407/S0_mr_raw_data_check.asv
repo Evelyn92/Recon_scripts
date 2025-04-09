@@ -1,28 +1,77 @@
 clc; clear;
-%% ====================================================
+%%
+
+% meas_MID00309_FID11683_sub1_HC.dat  
+% meas_MID00316_FID11690_sub1_BC.dat  
+
+% meas_MID00341_FID11715_sub1_BC_brain.dat  
+% meas_MID00334_FID11708_sub1_HC_brain.dat  
+% meas_MID00333_FID11707_sub1_debug_brain.dat  
+
+% meas_MID00318_FID11692_sub2_BC.dat  
+% meas_MID00344_FID11718_sub2_BC_brain.dat 
+% meas_MID00342_FID11716_sub2_debug_brain.dat  
+% meas_MID00343_FID11717_sub2_HC_brain.dat 
+  
+% meas_MID00346_FID11720_sub3_HC_brain.dat
+% meas_MID00347_FID11721_sub3_BC_brain.dat
+% meas_MID00345_FID11719_sub3_debug_brain.dat
+
+%% ==========================================================
 % Author: Yiwei Jia
-% Date: Feb 04, 2025.
+% Date: April 07, 2025
+% Here comes brain!!
 % derived from /Users/cag/Documents/forclone/mapVBVD/twix_process_yj
 % --------------------------------------------------------------------------------------------------
 % We need to intially inspect MR raw data for
 % (1) QC of raw data once a new batch of acquisition is done
 % (2) Check the duration of raw data to determine the length of ET mask
 % (3) Determine the start of trigger from physio: Now scanner -> trigger
-% ====================================================
+% ============================================================
 
-subject_num = 1;
-meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
+subject_num = 2;
+
+if subject_num == 1
+    meas_name_suffix = '_MID00333_FID11707_sub1_debug_brain';
+    hc_name_suffix = '_MID00334_FID11708_sub1_HC_brain';
+    bc_name_suffix = '_MID00341_FID11715_sub1_BC_brain';
+
+elseif subject_num == 2
+    meas_name_suffix = '_MID00342_FID11716_sub2_debug_brain';
+    hc_name_suffix = '_MID00343_FID11717_sub2_HC_brain';
+    bc_name_suffix = '_MID00344_FID11718_sub2_BC_brain';
+
+elseif subject_num == 3
+    meas_name_suffix = '_MID00345_FID11719_sub3_debug_brain';
+    hc_name_suffix = '_MID00346_FID11720_sub3_HC_brain';
+    bc_name_suffix = '_MID00347_FID11721_sub3_BC_brain';
+elseif subject_num == 4
+    meas_name_suffix = '_MID00345_FID11719_sub3_debug_brain';
+    hc_name_suffix = '_MID00346_FID11720_sub3_HC_brain';
+    bc_name_suffix = '_MID00347_FID11721_sub3_BC_brain';
+elseif subject_num == 5
+    meas_name_suffix = '_MID00345_FID11719_sub3_debug_brain';
+    hc_name_suffix = '_MID00346_FID11720_sub3_HC_brain';
+    bc_name_suffix = '_MID00347_FID11721_sub3_BC_brain';
+end
+
+% meas_name = ['meas', meas_name_suffix];
 meas_name = ['meas', meas_name_suffix];
+hc_name = ['meas', hc_name_suffix];
+bc_name = ['meas', bc_name_suffix];
+
 twix_name = ['twix', meas_name_suffix];
-twix_path =  ['/home/debi/yiwei/mreye_dataset/250127_acquisition/', twix_name,'.mat'];
-datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
+twix_path =  ['/home/debi/yiwei/mreye_dataset/250407/', twix_name,'.mat'];
+datasetDir = '/home/debi/yiwei/mreye_dataset/250407/';
 raw_data = [datasetDir, meas_name,'.dat'];
+hc_data = [datasetDir, hc_name,'.dat'];
+bc_data = [datasetDir, bc_name,'.dat'];
 save_trigger = false;
 %% (1) (2)
 inspect_raw_data = true;
 if inspect_raw_data
-    bmTwix_info(raw_data);
-    check_data_timestamp(datasetDir,false);
+    bmTwix_info(bc_data);
+    % check_data_timestamp(datasetDir,false);
 end
 % Please paste the output here for better inspection
 %-----------------------------------------------------------------

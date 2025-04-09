@@ -1,7 +1,7 @@
 clc; clear;
 %% ====================================================
 % Author: Yiwei Jia
-% Date: Feb 04, 2025.
+% Date: March 27, 2025.
 % derived from /Users/cag/Documents/forclone/mapVBVD/twix_process_yj
 % --------------------------------------------------------------------------------------------------
 % We need to intially inspect MR raw data for
@@ -10,20 +10,20 @@ clc; clear;
 % (3) Determine the start of trigger from physio: Now scanner -> trigger
 % ====================================================
 
-subject_num = 1;
-meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
-meas_name = ['meas', meas_name_suffix];
-twix_name = ['twix', meas_name_suffix];
-twix_path =  ['/home/debi/yiwei/mreye_dataset/250127_acquisition/', twix_name,'.mat'];
-datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
-raw_data = [datasetDir, meas_name,'.dat'];
-save_trigger = false;
+%   
+% 
+datasetDir = '/home/debi/yiwei/mreye_dataset/250324/v14_bern/';
+raw_data = fullfile(datasetDir,'meas_MID00147_FID294264_libre_failed.dat');
+% raw_data = fullfile(datasetDir,'meas_MID00148_FID294265_rect_fine.dat');
+% save_trigger = false;
 %% (1) (2)
 inspect_raw_data = true;
 if inspect_raw_data
+    % myTwix = mapVBVD_JH_for_monalisa(raw_data);
     bmTwix_info(raw_data);
-    check_data_timestamp(datasetDir,false);
+    % check_data_timestamp(datasetDir,false);
 end
+
 % Please paste the output here for better inspection
 %-----------------------------------------------------------------
 % In protocol, we set the T1 LIBRE duration: 362(sec)*1000(freq)

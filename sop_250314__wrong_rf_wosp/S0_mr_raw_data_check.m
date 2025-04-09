@@ -1,7 +1,8 @@
 clc; clear;
 %% ====================================================
 % Author: Yiwei Jia
-% Date: Feb 04, 2025.
+% Date: March 14, 2025.
+% Happy pi day!!
 % derived from /Users/cag/Documents/forclone/mapVBVD/twix_process_yj
 % --------------------------------------------------------------------------------------------------
 % We need to intially inspect MR raw data for
@@ -11,11 +12,22 @@ clc; clear;
 % ====================================================
 
 subject_num = 1;
-meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
+
+if subject_num == 1
+    %a: rf1: 2 rf pulses
+    meas_name_suffix = '_MID00143_FID292458_a1_rf1';
+elseif subject_num == 2
+    %b: rf2: single rf pulse with 2 parts
+    meas_name_suffix = '_MID00151_FID292466_b1_rf2';
+else
+    %c: rect rf pulses as reference
+    meas_name_suffix = '_MID00154_FID292469_c1_rect_rf';
+end
+
 meas_name = ['meas', meas_name_suffix];
 twix_name = ['twix', meas_name_suffix];
 twix_path =  ['/home/debi/yiwei/mreye_dataset/250127_acquisition/', twix_name,'.mat'];
-datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
+datasetDir = '/home/debi/yiwei/mreye_dataset/250314_libre_seq_rfsp/data/';
 raw_data = [datasetDir, meas_name,'.dat'];
 save_trigger = false;
 %% (1) (2)

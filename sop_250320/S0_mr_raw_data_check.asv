@@ -1,7 +1,28 @@
 clc; clear;
+%%
+% meas_MID0001_JB_LIBRE2p2_a8_BC.dat
+% meas_MID0001_JB_LIBRE2p2_a8.dat
+% meas_MID0002_JB_RectPulse_a5_BC.dat
+% meas_MID0002_JB_RectPulse_a5.dat
+% meas_MID0003_JB_LIBRE2p2_a8_PERewinder_BC.dat
+% meas_MID0003_JB_LIBRE2p2_a8_PERewinder.dat
+% meas_MID0003_JB_LIBRE2p2_a8_PERewinder_HC.dat
+% meas_MID0004_JB_LIBRE2p2_a8_woPERewinder_BC.dat
+% meas_MID0004_JB_LIBRE2p2_a8_woPERewinder.dat
+% meas_MID0004_JB_LIBRE2p2_a8_woPERewinder_HC_state_clf.dat
+% meas_MID0005_JB_RectPulse_a5_PERewinder_BC.dat
+% meas_MID0005_JB_RectPulse_a5_PERewinder.dat
+% meas_MID0006_JB_RectPulse_a5_woPERewinder_BC.dat
+% meas_MID0006_JB_RectPulse_a5_woPERewinder.dat
+% meas_MID0007_b_BC_rfsp_adc.dat
+% meas_MID0007_b_HC_rfsp_adc.dat
+% meas_MID0007_b_rfsp_adc.dat
+
+
 %% ====================================================
 % Author: Yiwei Jia
-% Date: Feb 04, 2025.
+% Date: March 20, 2025.
+% Happy pi day!!
 % derived from /Users/cag/Documents/forclone/mapVBVD/twix_process_yj
 % --------------------------------------------------------------------------------------------------
 % We need to intially inspect MR raw data for
@@ -10,19 +31,41 @@ clc; clear;
 % (3) Determine the start of trigger from physio: Now scanner -> trigger
 % ====================================================
 
-subject_num = 1;
-meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
-meas_name = ['meas', meas_name_suffix];
+subject_num = 4;
+
+if subject_num == 1
+    %a: rf1: 2 rf pulses
+    meas_name_suffix = '_MID0001_JB_LIBRE2p2_a8';
+elseif subject_num == 2
+    %b: rf2: single rf pulse with 2 parts
+    meas_name_suffix = '_MID0002_JB_RectPulse_a5';
+elseif subject_num == 3
+    %c: rect rf pulses as reference
+    meas_name_suffix = '_MID0003_JB_LIBRE2p2_a8_PERewinder';
+elseif subject_num==4
+    meas_name_suffix = '_MID0004_JB_LIBRE2p2_a8_woPERewinder';
+    hc_name_suffix = '_MID0004_JB_LIBRE2p2_a8_woPERewinder_HC_state_clf';
+    bc_name_suffix = '_MID0004_JB_LIBRE2p2_a8_woPERewinder_BC';
+elseif subject_num==5
+    meas_name_suffix = '_MID0005_JB_RectPulse_a5_PERewinder';
+elseif subject_num==6
+    meas_name_suffix = '_MID0006_JB_RectPulse_a5_woPERewinder';
+else
+    meas_name_suffix = '_MID0007_b_rfsp_adc';
+end
+
+% meas_name = ['meas', meas_name_suffix];
+meas_name = ['meas', hc_name_suffix];
 twix_name = ['twix', meas_name_suffix];
 twix_path =  ['/home/debi/yiwei/mreye_dataset/250127_acquisition/', twix_name,'.mat'];
-datasetDir = '/home/debi/yiwei/mreye_dataset/250127_acquisition/';
+datasetDir = '/home/debi/yiwei/mreye_dataset/debug_0320/data/';
 raw_data = [datasetDir, meas_name,'.dat'];
 save_trigger = false;
 %% (1) (2)
 inspect_raw_data = true;
 if inspect_raw_data
     bmTwix_info(raw_data);
-    check_data_timestamp(datasetDir,false);
+    % check_data_timestamp(datasetDir,false);
 end
 % Please paste the output here for better inspection
 %-----------------------------------------------------------------
