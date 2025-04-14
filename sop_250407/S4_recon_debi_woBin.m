@@ -11,7 +11,7 @@ clear;clc;
 
 %%
 cs_recon=1;
-for subject_num = 2
+for subject_num = 1
 
 subject_num_C = subject_num;
 datasetDir = '/home/debi/yiwei/mreye_dataset/250407/';

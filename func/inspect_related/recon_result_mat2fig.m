@@ -5,17 +5,24 @@ clear;clc;
 nImg=2;
 %%
 % Manually select two results
-fig_name = 'libre_rect_ori_traj_0407_chuv';
-fig_path = '/home/debi/yiwei/recon_results/250407/';
+fig_name = 'libre_vs_gre';
+fig_path = '/home/debi/yiwei/recon_results/250407/libre_vs_gre_chuv_img/';
+if isfolder(fig_path)==0
+    mkdir(fig_path)
+end
+
 xpath{1} = ['/home/debi/yiwei/recon_results/250407/Sub001/T1_LIBRE_woBinning/output/mask_libre_rfsp/' ...
-    'x_nIter15_delta_1.000.mat'];%top
+    'x_nIter15_delta_1.000.mat'];%top;%bottom
 x{1} = load(xpath{1}, 'x');
 tt{1} = 'libre';
 
 xpath{2} = ['/home/debi/yiwei/recon_results/250407/Sub002/T1_LIBRE_woBinning/output/mask_rect_rfsp/' ...
     'x_nIter15_delta_1.000.mat'];%top;%bottom
 x{2} = load(xpath{2}, 'x');
-tt{2} = 'rect';
+tt{2} = 'orig';
+
+
+
 % xpath{3} = ['/home/debi/yiwei/recon_results/250402/' ...
 %     'Sub003/T1_LIBRE_woBinning/output/mask_libre_rfsp_qua50_adc_ph/x0.mat'];
 % x{3} = load(xpath{3}, 'x0');
@@ -30,7 +37,7 @@ tt{2} = 'rect';
 %     'libre wosp', 'rf wosp'};
 %% set the array list
 
-for idx = 45:60
+for idx = 40:70
     fig=figure;set(gcf, 'Color', 'w');  
     % Determine subplot layout (square-like arrangement)
     rows = ceil(sqrt(nImg));
@@ -43,11 +50,17 @@ for idx = 45:60
         else
             fields = fieldnames(x{i});
             x_i = x{i}.(fields{1});
-            x_i = permute(x_i, [2, 1, 3]);
+            
+            if isa(x_i, 'cell')
+                x_i = x_i{1};
+            end
+            % x_i = permute(x_i, [2, 1, 3]);
             x_i = flip(x_i, 1);
             sl = mat2gray(abs(x_i(60:120,30:90,idx)));
             if i==1
-                sl = equal_func(sl, 0.01, 0.8);
+                sl = equal_func(sl, 0.01, 0.9);
+            else
+                sl = equal_func(sl, 0.01, 0.9);
             end
         end
         subplot(rows, cols, i);
@@ -59,5 +72,4 @@ for idx = 45:60
  
     exportgraphics(fig, strcat(fig_path,fig_name,'_', num2str(idx),'.png'), 'Resolution', 300);
     
-
 end

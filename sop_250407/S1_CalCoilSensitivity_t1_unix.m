@@ -13,7 +13,7 @@ clear; clc;
 addpath(genpath('/home/debi/yiwei/forclone/Recon_scripts'));
 
 %% Initialize the directories and acquire the Coil
-subject_num = 5;
+subject_num = 3;
 %
 datasetDir = '/home/debi/yiwei/mreye_dataset/250407/';
 reconDir = '/home/debi/yiwei/recon_results/250407/';
@@ -62,11 +62,13 @@ bodyCoilreader = createRawDataReader(bodyCoilFile, true);
 bodyCoilreader.acquisitionParams.nSeg = 22;
 bodyCoilreader.acquisitionParams.nShot = 419;
 bodyCoilreader.acquisitionParams.nShot_off = 14;
+bodyCoilreader.acquisitionParams.traj_type = 't5';
 
 arrayCoilReader = createRawDataReader(arrayCoilFile, true);
 arrayCoilReader.acquisitionParams.nSeg = 22;
 arrayCoilReader.acquisitionParams.nShot = 419;
 arrayCoilReader.acquisitionParams.nShot_off = 14;
+arrayCoilReader.acquisitionParams.traj_type = 't5';
 
 % Ensure consistency in number o1f shot-off points
 nShotOff = arrayCoilReader.acquisitionParams.nShot_off;
@@ -95,11 +97,18 @@ mask = bmCoilSense_nonCart_mask_automatic(y_body, Gn, false);
 C_array_prime = bmCoilSense_nonCart_primary(y_surface, y_ref, C_ref, Gn, ve, mask);
 % Refine the sensitivity estimate with optimization
 nIter = 5;
-[C, x] = bmCoilSense_nonCart_secondary(y_surface, C_array_prime, y_ref, ...
+[C1, x] = bmCoilSense_nonCart_secondary(y_surface, C_array_prime, y_ref, ...
                                        C_ref, Gn, Gu, Gut, ve, nIter, false);
 
 % Display Results
-bmImage(C);
+bmImage(C1);
+%% 
+C = C1;
+for iCh = 1:size(C1,4)
+    C(:,:,:,iCh) = flip(permute(C1(:,:,:,iCh), [2 1 3]),2);
+    C(:,:,:,iCh) = flip(permute(C(:,:,:,iCh), [2 1 3]),2);
+end
+bmImage(C)
 %% Save C into the folder
 
 saveCDirList = {strcat('/Sub00',num2str(subject_num),'/T1_LIBRE_Binning/C/'),
@@ -127,3 +136,32 @@ end
 
 
 
+%%
+
+p = arrayCoilReader.acquisitionParams;
+p.traj_type = 'rot_x_full_radial3_phylotaxis';  % Trajectory type
+% Acquisition from Bern need to change the following part!!
+p.nShot_off = 14; % in case no validation UI
+p.nShot = nShot; % in case no validation UI
+p.nSeg = 22; % in case no validation UI
+%
+% Load the raw data and compute trajectory and volume elements
+y_tot = reader.readRawData(true, true);  % Filter nshotoff and SI
+t_tot = bmTraj(p);                       % Compute trajectory
+ve_tot = bmVolumeElement(t_tot, 'voronoi_full_radial3');  % Volume elements
+
+% Adjust grid size for coil sensitivity maps
+FoV = p.FoV;  % Field of View
+
+% ==============================================
+% Warning: due to the memory limit, all the voxel_size set on debi
+% is always >= 1 to make sure the matrix size <=240
+voxel_size = 4;
+% So the mitosius saved on debi
+% is the smaller than the full resolution.
+% ===============================================
+matrix_size = round(FoV/voxel_size);  % Max nominal spatial resolution
+N_u = [matrix_size, matrix_size, matrix_size];
+dK_u = [1, 1, 1]./FoV;
+
+x_tot = bmMathilda(y_tot, t_tot, ve_tot, C, N_u, N_u, dK_u); 

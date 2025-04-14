@@ -10,8 +10,8 @@ clear; clc;
 
 % change woBinning/Binning, change th75->th0, change eyeMask name!
 %%
-subject_array = 5;
-for subject_num = subject_array
+subject_array = 3;
+subject_num = subject_array;
 % subject_num = subject_array;
 subject_num_C = subject_num;
 
@@ -63,11 +63,7 @@ bodyCoilFile = [datasetDir, bc_name,'.dat'];
 arrayCoilFile = [datasetDir, hc_name,'.dat'];
 
 
-
-
 otherDir = [reconDir, strcat('/Sub00',num2str(subject_num),'/T1_LIBRE_woBinning/other/')];
-
-
 
 % Check if the directory exists
 if ~isfolder(otherDir)
@@ -84,17 +80,21 @@ saveCDirList = {strcat('/Sub00',num2str(subject_num_C),'/T1_LIBRE_Binning/C/'),
 
 %% Step 1: Load the Raw Data
 autoFlag = true;  % Disable validation UI
+% reader = createRawDataReader(measureFile, autoFlag);
 reader = createRawDataReader(measureFile, autoFlag);
 p = reader.acquisitionParams;
-p.traj_type = 'full_radial3_phylotaxis';  % Trajectory type
+p.traj_type = 't5';  % Trajectory type
 % Acquisition from Bern need to change the following part!!
 p.nShot_off = 14; % in case no validation UI
 p.nShot = nShot; % in case no validation UI
 p.nSeg = 22; % in case no validation UI
+
 %
 % Load the raw data and compute trajectory and volume elements
 y_tot = reader.readRawData(true, true);  % Filter nshotoff and SI
+%%
 t_tot = bmTraj(p);                       % Compute trajectory
+% t_tot = reshape(t_pulseq,[3,480,20706]); 
 ve_tot = bmVolumeElement(t_tot, 'voronoi_full_radial3');  % Volume elements
 
 %% Step 2: Load Coil Sensitivity Maps
@@ -104,7 +104,7 @@ CfileName = 'C.mat';
 CfilePath = fullfile(saveCDir, CfileName);
 load(CfilePath, 'C');  % Load sensitivity maps
 disp(['C is loaded from:', CfilePath]);
-% Adjust grid size for coil sensitivity maps
+%% Adjust grid size for coil sensitivity maps
 FoV = p.FoV;  % Field of View
 
 % ==============================================
@@ -117,8 +117,11 @@ voxel_size = 4;
 matrix_size = round(FoV/voxel_size);  % Max nominal spatial resolution
 N_u = [matrix_size, matrix_size, matrix_size];
 dK_u = [1, 1, 1]./FoV;
-%
+%%
 C = bmImResize(C, [48, 48, 48], N_u);
+%% tmp: check HC
+x0 = bmMathilda(y_tot, t_tot, ve_tot, C, N_u, N_u, dK_u);
+bmImage(x0)
 %% Step 3: Normalize the Raw Data
 if N_u >240
     normalization = false;
@@ -195,7 +198,7 @@ disp('Mitosius files are saved!')
 disp(mDir)
 
 
-end
+
 
 
 
