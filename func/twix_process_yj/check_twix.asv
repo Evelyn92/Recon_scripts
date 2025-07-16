@@ -1,0 +1,26 @@
+%% Yiwei Jia July 14 2025
+% The script is specifically used for analyzing Twix 
+
+%%
+clc; clear all;
+
+raw_data = ['/home/debi/yiwei/mreye_dataset/250624/' ...
+    '/meas_MID00388_FID34125_pulseqv15.dat'];
+twix = mapVBVD_JB(raw_data);
+seqHash_twix = twix{end}.hdr.Dicom.tSequenceVariant;
+%%
+if length(seqHash_twix)==32
+    fprintf(['raw data contain pulseq-file signature ' seqHash_twix '\n']);
+end
+%%
+seqFile = ['/home/debi/yiwei/forclone/pulseqmreye/debug_0624/' ...
+    '/seq2_t1w_libre_debugTR8p01_rfdelay_gdsp_gain_0.seq'];
+
+% seq1_t1w_gre_debug_TR6p2wo_gzsp_cor_te_wrap_rf
+% seq1_t1w_libre_debugTR6p2_rfdelay_gain_0
+% seq2_t1w_gre_debug_TR8p01_rfdelay_gdsp
+% seq2_t1w_libre_debugTR8p01_rfdelay_gdsp_gain_0
+
+hash = DataHash(fileread(seqFile), struct('Method','MD5'));
+disp(hash);
+

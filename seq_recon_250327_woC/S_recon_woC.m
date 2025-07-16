@@ -52,9 +52,6 @@ end
 
 %
 bmImage(x0);
-%%
-
-
 
 if ~isfolder(x0Dir)
     % If it doesn't exist, create it
