@@ -6,48 +6,39 @@
 % >> xrms_i_p = cat(2,[xrms_i, xrms_p]);
 % >> bmImage(xrms_i_p);
 % Ensure the images are in double precision
+bmImage(xlibre1);
+bmImage(xlibre2);
+bmImage(xgre1);
+bmImage(xgre2);
 
-<<<<<<< HEAD
-x1 = permute(x_libre_6p2, [1,3,2]);
-x1 = flip(x1,1);
-bmImage(x1)
-
-x2 = permute(x_gre_6p2, [1,3,2]);
-x2 = flip(x2,1);
-bmImage(x2)
 %%
-[img1, img2] = norm_two_image(x1(61:120,:,:),x2(61:120,:,:));
+[img1, img2] = norm_two_image(xlibre1,xlibre2);
 img_1_2 = cat(1,img1, img2);
 bmImage(img_1_2);
 
-%% sl_start = 40;
-show_image = img_1_2(:,:,sl_start);
-for slice = 45:5:80
-=======
-% xrms_p_flipz = flip(xrms_p_s, 3);  % Flips along z-axis
-% xrms_p_flipz_rot = rot90(xrms_p_flipz, 2);  % 180° rotation in XY
+%% 
+sl_start = 40;
+inc=10;
+sl_end=80;
 
-[img1, img2] = norm_two_image(xrms_2,xrms_5);
-img_1_2 = cat(2,[img1, img2]);
-bmImage(img_1_2);
-img_1_2_vertical = permute(img_1_2, [2,1,3]);
-sl_start = 100;
-show_image = img_1_2_vertical(:,:,sl_start);
-for slice = 110:10:140
->>>>>>> b5d5137 (update recent)
-    show_image = cat(2,[show_image, img_1_2_vertical(:,:,slice)]);
+show_image = img_1_2(:,:,sl_start);
+
+for slice = (sl_start+inc):inc:sl_end
+    show_image = cat(2,[show_image, img_1_2(:,:,slice)]);
 end
 bmImage(show_image);
 
 %%
-diff_map = diff_volume(xrms_2,xrms_5);
-sl_start = 100;
-show_diff_image = permute(diff_map(:,:,sl_start), [2,1,3]);
-for slice_idx = 110:10:140
-show_diff_image = cat(2,[show_diff_image, permute(diff_map(:,:,slice_idx), [2,1,3])]);
+diff_map = diff_volume(img1,img2);
+sl_start = 40;
+inc=10;
+sl_end=80;
+show_diff_image = diff_map(:,:,sl_start);
+for slice_idx = sl_start+inc:inc:sl_end
+show_diff_image = cat(2,[show_diff_image, diff_map(:,:,slice_idx)]);
 
 end
-loLev = 0.0;upLev = 0.6;[imClip, rgb_vec] = relaxationColorMap('T1', show_diff_image, loLev, upLev);
+loLev = 0.0;upLev = 0.1;[imClip, rgb_vec] = relaxationColorMap('T1', show_diff_image, loLev, upLev);
 figure('Color', 'white'); set(gca, 'Color', 'white'); 
 imshow(imClip, 'DisplayRange', [loLev, upLev], 'InitialMagnification', 'fit'); 
 % title(strcat('difference map-', num2str(slice_idx)));
@@ -69,4 +60,15 @@ function [diff_img]=diff_volume(img1,img2)
 [img1_s,img2_s] = norm_two_image(img1,img2);
 diff_img = abs(img1_s-img2_s);
 disp(max(diff_img(:)))
+end
+
+function V_rot = rotate_volume(V,theta)
+V = double(abs(V));
+
+% theta: degree
+% positive: counterclockwise; negative: clockwise
+    V_rot = zeros(size(V));
+    for k = 1:size(V,3)
+        V_rot(:,:,k) = imrotate(V(:,:,k), theta, 'bilinear', 'crop');  % or 'loose'
+    end
 end

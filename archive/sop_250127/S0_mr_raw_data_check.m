@@ -24,7 +24,7 @@ save_trigger = false;
 inspect_raw_data = true;
 if inspect_raw_data
     bmTwix_info(raw_data);
-    check_data_timestamp(datasetDir,false);
+    % check_data_timestamp(datasetDir,false);
 end
 % Please paste the output here for better inspection
 %-----------------------------------------------------------------

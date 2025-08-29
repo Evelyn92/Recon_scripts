@@ -1,0 +1,57 @@
+
+snr_roi_mask_example(img1(:,:,120));
+
+function snr_roi_mask_example(imageSlice, SelectBack, CalSNR)
+    % imageSlice: 2D matrix (e.g., one MRI slice)
+
+   [roi_values, maskROI] = select_ROI(imageSlice, 'circle');
+   if SelectBack
+       [bg_values, maskBg] = select_ROI(imageSlice, 'rect');
+   end
+
+   if SelectBack && CalSNR
+       snr_estimate = mean(roi_values) / std(bg_values);
+       fprintf('Estimated SNR in ROI: %.2f\n', snr_estimate);
+   end
+
+
+
+ 
+    
+
+    snr_estimate = mean(roi_values) / std(roi_values);
+    
+    
+    % Save or return the mask if needed
+    assignin('base', 'roi_mask', mask);  % Optional: export to workspace
+end
+
+
+function [roi_values, mask]= select_ROI(imageSlice, shapeInfo)
+    figure;
+    imshow(imageSlice, [], 'InitialMagnification', 'fit');
+
+    if strcmp(shapeInfo, 'circle')
+        title('Draw a circle background. Double-click to confirm.'); 
+        % Let user select circle ROI
+        h = imellipse(gca, []);
+    elseif strcmp(shapeInfo, 'rect')
+        title('Draw a rect background. Double-click to confirm.'); 
+        % Let user select rectangular background
+        h = imrect(gca, []);
+       
+    end
+
+    % Create binary mask from the selected region
+    position = wait(h);  % Wait for user to finish drawing
+    mask = createMask(h); 
+
+
+    % Show the mask overlay
+    figure;
+    imshow(imageSlice, [], 'InitialMagnification', 'fit'); hold on;
+    visboundaries(mask, 'Color', 'r');
+    title('Selected ROI Overlay');
+    roi_values = imageSlice(mask);
+
+end
