@@ -1,0 +1,50 @@
+nImg = 2;
+tt{1} = 'IDEA LIBRE';
+tt{2} = 'IDEA Rect';
+x{1} = x_sub6;
+x{2} = x_sub7;
+save_fig = 0;
+%%
+for idx = 120
+    fig=figure;set(gcf, 'Color', 'w');  
+    % Determine subplot layout (square-like arrangement)
+    rows = ceil(sqrt(nImg));
+    cols = ceil(nImg / rows);
+    tiledlayout(rows, cols, 'Padding', 'none', 'TileSpacing', 'none');
+    
+    for i = 1:nImg
+       
+        if isa(x{1}, 'single')
+            x_i = x{i};
+            disp('not a cell')
+        else
+            fields = fieldnames(x{i});
+            x_i = x{i}.(fields{1});
+            disp('loading from a cell')
+        end
+
+            x_i = permute(x_i, [2,3,1]);
+            sl = mat2gray(abs(x_i(:,:,idx)));
+            % sl = equal_func(sl, 0, 0.8);
+               
+            
+ 
+        ax = nexttile;
+        loLev = 0.05;upLev = 1.5;[imClip, rgb_vec] = relaxationColorMap('T1', sl , loLev, upLev);
+        imshow(imClip, 'DisplayRange', [loLev, upLev], 'InitialMagnification', 'fit'); 
+        colormap(ax, rgb_vec); colorbar;
+    
+        axis off;  % Hide axes
+        title([tt{i},': ', num2str(idx)], 'FontSize', 10);  % Add title
+    end
+
+    if save_fig
+        exportgraphics(fig, strcat(fig_path,fig_name,'_', num2str(idx),'.png'), 'Resolution', 300);
+    end
+
+end
+
+
+function x_flipped=flip_3axis(x)
+x_flipped = flip(flip(flip(x, 1), 2), 3);
+end

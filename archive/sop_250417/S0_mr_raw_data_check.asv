@@ -1,30 +1,61 @@
 clc; clear;
-%% ====================================================
+%
+
+%% ==========================================================
 % Author: Yiwei Jia
-% Date: Feb 04, 2025.
+% Date: April 07, 2025
+% Here comes brain!!
 % derived from /Users/cag/Documents/forclone/mapVBVD/twix_process_yj
 % --------------------------------------------------------------------------------------------------
 % We need to intially inspect MR raw data for
 % (1) QC of raw data once a new batch of acquisition is done
 % (2) Check the duration of raw data to determine the length of ET mask
 % (3) Determine the start of trigger from physio: Now scanner -> trigger
-% ====================================================
+% ============================================================
 
-subject_num = 1;
-%
-meas_name_suffix = '_MID00332_FID214628_BEAT_LIBREon_eye_(23_09_24)_sc_trigger';
-% meas_name_suffix = '_MID00346_FID214642_BEAT_LIBREon_eye_HC_BC';
+subject_num = 3;
+
+if subject_num == 1
+    meas_name_suffix = '_MID00333_FID11707_sub1_debug_brain';
+    hc_name_suffix = '_MID00334_FID11708_sub1_HC_brain';
+    bc_name_suffix = '_MID00341_FID11715_sub1_BC_brain';
+
+elseif subject_num == 2
+    meas_name_suffix = '_MID00342_FID11716_sub2_debug_brain';
+    hc_name_suffix = '_MID00343_FID11717_sub2_HC_brain';
+    bc_name_suffix = '_MID00344_FID11718_sub2_BC_brain';
+
+elseif subject_num == 3
+    meas_name_suffix = '_MID00345_FID11719_sub3_debug_brain';
+    hc_name_suffix = '_MID00346_FID11720_sub3_HC_brain';
+    bc_name_suffix = '_MID00347_FID11721_sub3_BC_brain';
+elseif subject_num == 4
+    meas_name_suffix = '_MID00309_FID11683_sub1_HC';
+    hc_name_suffix = '_MID00309_FID11683_sub1_HC';
+    bc_name_suffix = '_MID00316_FID11690_sub1_BC';
+elseif subject_num == 5
+    meas_name_suffix = '_MID00345_FID11719_sub3_debug_brain';
+    hc_name_suffix = '_MID00346_FID11720_sub3_HC_brain';
+    bc_name_suffix = '_MID00318_FID11692_sub2_BC';
+end
+
+% meas_name = ['meas', meas_name_suffix];
 meas_name = ['meas', meas_name_suffix];
+hc_name = ['meas', hc_name_suffix];
+bc_name = ['meas', bc_name_suffix];
+
 twix_name = ['twix', meas_name_suffix];
-twix_path =  ['/Users/cag/Documents/Dataset/250127_acquisition/', twix_name,'.mat'];
-datasetDir = '/Users/cag/Documents/Dataset/250127_acquisition/';
+twix_path =  ['/home/debi/yiwei/mreye_dataset/250407/', twix_name,'.mat'];
+datasetDir = '/home/debi/yiwei/mreye_dataset/250407/';
 raw_data = [datasetDir, meas_name,'.dat'];
+hc_data = [datasetDir, hc_name,'.dat'];
+bc_data = [datasetDir, bc_name,'.dat'];
 save_trigger = false;
 %% (1) (2)
 inspect_raw_data = true;
 if inspect_raw_data
-    bmTwix_info(raw_data);
-    check_data_timestamp(datasetDir,false);
+    bmTwix_info(bc_data);
+    % check_data_timestamp(datasetDir,false);
 end
 % Please paste the output here for better inspection
 %-----------------------------------------------------------------
@@ -44,6 +75,8 @@ if save_trigger
     disp(['Saving twix into', twix_path]);
     save(twix_path, 'twix');
 end
+%% April 17 exploring the EVNT
+
 %%
 twix_image2 = twix{1,2};
 pmuEXT = twix_image2.PMUdata.EXT;
@@ -60,16 +93,10 @@ pmu_mark_table = pmu_ext_table;
 pmu_mark_table((pmu_ext_table.EXT1 == 0) & (pmu_ext_table.EXT2 == 0),:)=[];
 %%
 figure;
-
-plot(time_ms, pmu_ext_table.EXT1, "LineWidth",2);
-hold on;
-plot(time_ms, pmu_ext_table.EXT2,"LineWidth",2);
-grid on;
-ax = gca; 
-ax.FontSize = 20;
-xlim([0, 10000])
-xlabel('Time (ms)','FontSize',24,'FontName','Times New Roman')
-ylabel('Pulse Amplitude','FontSize',24,'FontName','Times New Roman')
+plot(time_ms(1:1*1000), pmu_ext_table.EXT1(1:1*1000))
+%plot(time_ms(1:10*1000), pmu_ext_table.EXT2(1:10*1000))
+xlabel('time (ms)')
+ylabel('pulse amplitude')
 %%
 % Example data
 t_ms = time_ms(:); % Time vector (in seconds)
@@ -86,15 +113,12 @@ disp(array2table([peaks_amp, locs_time_ms, locs_tp]))
 
 %% Plot
 figure;
-plot(t_ms, y, 'LineWidth',2); hold on;
+plot(t_ms, y, 'b'); hold on;
 plot(locs_time_ms, peaks_amp, 'ro', 'MarkerFaceColor', 'r'); % Mark peaks
-xlabel('Time (ms)','FontSize',24,'FontName','Times New Roman');
-ylabel('Pulse Amplitude','FontSize',24,'FontName','Times New Roman')
-title('Detected Peaks in Pulse Sequence', 'FontSize',24,'FontName','Times New Roman');
-xlim([0,10*1000])
+xlabel('Time (ms)');
+ylabel('Amplitude');
+title('Detected Peaks in Pulse Sequence');
 grid on;
-ax = gca; 
-ax.FontSize = 20;
 %%
 disp('check intervals between the triggers:')
 % diff(locs_time_ms)
