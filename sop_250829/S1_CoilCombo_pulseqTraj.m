@@ -13,25 +13,18 @@ clc;
 addpath(genpath('/Users/cag/Documents/forclone/Recon_scripts'));
 addpath(genpath('/Users/cag/Documents/forclone/pulseq'));
 addpath(genpath('/Users/cag/Documents/forclone/monalisa'));
-% meas_MID00157_FID314156_JB_LIBRE2p2_a8_woPERewinder.dat
-% meas_MID00158_FID314157_t1w_swap_0.dat
-% meas_MID00159_FID314158_t1w_swap_1.dat
-% meas_MID00160_FID314159_JB_t2w_LIBRE2p2_a8_woPERewinder.dat
-% meas_MID00184_FID314183_t2_22_hs.dat
 
-% meas_MID00176_FID314175_JB_LIBRE2p2_t2w.dat small size
-% meas_MID00177_FID314176_t2_22_hs.dat small
 
 
 %% Initialize the directories and acquire the Coil
-subject_num = 7;
+subject_num = 1;
 use_C = 0;
 %
-datasetDir = '/Users/cag/Documents/Dataset/datasets/250829/yannick/';
+datasetDir = '/Users/cag/Documents/Dataset/datasets/250829/';
 reconDir = '/Users/cag/Documents/Dataset/recon_results/250829/';
 
-mask_note_list={'swap1_FA4_RF2','swap1_FA8_RF2', ...
-    'swap1_FA4_RF2_freqPos', 'swap1_FA16_RF2.seq', 'swap0_FA4_RF2.seq', 'idea', 'yannick'};
+mask_note_list={'swap1_FA4_RF2_pq','swap1_FA8_RF2', ...
+    'swap1_FA4_RF2_freqPos', 'swap1_FA16_RF2.seq', 'swap0_FA4_RF2.seq', 'idea'};
 
 mask_note = mask_note_list{subject_num};
 
@@ -68,11 +61,6 @@ elseif subject_num == 6
     hc_name_suffix = ' ';
     bc_name_suffix = ' ';
     nShot=1000;
-elseif subject_num == 7
-    meas_name_suffix = '_MID00213_FID315307_yannick_0829';
-    hc_name_suffix = ' ';
-    bc_name_suffix = ' ';
-    nShot=419;
 end
 
 
@@ -86,14 +74,15 @@ arrayCoilFile = [datasetDir, hc_name,'.dat'];
 
 
 %% Load and Configure Data
+
 reader = createRawDataReader(measureFile, false);
 reader.acquisitionParams.nSeg = 22;
 
 reader.acquisitionParams.nShot_off = 14;
-reader.acquisitionParams.traj_type = 'full_radial3_phylotaxis';
-
-% YJ: specifically turn off self navigation
-reader.acquisitionParams.traj_type.selfNav_flag=0;
+% reader.acquisitionParams.traj_type = 'full_radial3_phylotaxis';
+reader.acquisitionParams.traj_type = 'pulseq';
+reader.acquisitionParams.pulseqTrajFile_name = "/Users/cag/Documents/forclone/pulseq4mreye/dev/libre_3d_radial/output/0829_t1w/" + ...
+    "seq1_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2.seq";
 
 % Ensure consistency in number o1f shot-off points
 nShotOff = reader.acquisitionParams.nShot_off;
@@ -107,7 +96,7 @@ p.nSeg = 22; % in case no validation UI
 
 %
 % Load the raw data and compute trajectory and volume elements
-y_tot = reader.readRawData(true, false);  % Filter nshotoff and SI
+y_tot = reader.readRawData(true, true);  % Filter nshotoff and SI
 t_tot = bmTraj(p);                       % Compute trajectory
 
 
@@ -120,7 +109,7 @@ ve_tot = bmVolumeElement(t_tot, 'voronoi_full_radial3');  % Volume elements
 % Warning: due to the memory limit, all the voxel_size set on debi
 % is always >= 1 to make sure the matrix size <=240
 
-voxel_size = 0.8;
+voxel_size = 2;
 
 % So the mitosius saved on debi
 % is the smaller than the full resolution.
@@ -180,5 +169,7 @@ xrmsPath = fullfile(x0Dir, 'xrms.mat');
 save(xrmsPath, 'xrms', '-v7.3');
 disp('xrmsPath has been saved here:')
 disp(xrmsPath)
+
 bmImage(xrms)
+
 
