@@ -73,8 +73,9 @@ arrayCoilFile = [datasetDir, hc_name,'.dat'];
 %% Load and Configure Data
 
 reader = createRawDataReader(measureFile, false);
+% Acquisition from Bern need to manually define the following part!!
 reader.acquisitionParams.nSeg = 22;
-
+reader.acquisitionParams.nShot = nShot; % in case no validation UI
 reader.acquisitionParams.nShot_off = 14;
 % reader.acquisitionParams.traj_type = 'full_radial3_phylotaxis';
 reader.acquisitionParams.traj_type = 'pulseq';
@@ -83,18 +84,10 @@ reader.acquisitionParams.pulseqTrajFile_name = seqFolder + ...
 
 % Ensure consistency in number o1f shot-off points
 nShotOff = reader.acquisitionParams.nShot_off;
-
-p = reader.acquisitionParams;
-
-% Acquisition from Bern need to change the following part!!
-p.nShot_off = 14; % in case no validation UI
-p.nShot = nShot; % in case no validation UI
-p.nSeg = 22; % in case no validation UI
-
 %
 % Load the raw data and compute trajectory and volume elements
 y_tot = reader.readRawData(true, true);  % Filter nshotoff and SI
-t_tot = bmTraj(p);                       % Compute trajectory
+t_tot = bmTraj(reader.acquisitionParams);                       % Compute trajectory
 
 
 ve_tot = bmVolumeElement(t_tot, 'voronoi_full_radial3');  % Volume elements
