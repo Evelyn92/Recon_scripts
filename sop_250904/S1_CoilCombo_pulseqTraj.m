@@ -17,11 +17,11 @@ addpath(genpath('/Users/cag/Documents/forclone/monalisa'));
 
 
 %% Initialize the directories and acquire the Coil
-subject_num = 1;
+for subject_num = 3:5
 
 %
-datasetDir = '/Users/cag/Documents/Dataset/datasets/250829/';
-reconDir = '/Users/cag/Documents/Dataset/recon_results/250829/';
+datasetDir = '/Users/cag/Documents/Dataset/datasets/250904/';
+reconDir = '/Users/cag/Documents/Dataset/recon_results/250904/';
 seqFolder = "/Users/cag/Documents/forclone/pulseq4mreye/dev/libre_3d_radial/output/0904_t1w/";
 mask_note_list={'swap1_FA4_RF2_Shot1000','swap1_FA4_RF2_overlap0_Shot987', ...
     'swap1_FA4_RF2_overlap1_Shot987', 'swap1_FA4_RF2_overlap1_Shot987_BW2', 'swap1_FA4_RF2_overlap1_Shot987_FOV240_osR1'};
@@ -29,35 +29,35 @@ mask_note_list={'swap1_FA4_RF2_Shot1000','swap1_FA4_RF2_overlap0_Shot987', ...
 mask_note = mask_note_list{subject_num};
 
 if subject_num == 1
-    meas_name_suffix = '_MID00205_FID315299_t1w_seq1';
+    meas_name_suffix = '_MID00288_FID54949_YJ_seq1';
     hc_name_suffix = ' ';
     bc_name_suffix = ' ';
     nShot=1000;
-    seqName = "seq1_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_Shot1000.seq";
+    seqName = "yj_seq1_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_Shot1000.seq";
 elseif subject_num == 2
-    meas_name_suffix = '_MID00206_FID315300_t1w_seq2';
+    meas_name_suffix = '_MID00291_FID54952_YJ_seq2';
     hc_name_suffix = ' ';
     bc_name_suffix = ' ';
     nShot=987;
-    seqName = "seq2_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap0_Shot987.seq";
+    seqName = "yj_seq2_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap0_Shot987.seq";
 elseif subject_num == 3
-    meas_name_suffix = '_MID00211_FID315305_t1w_seq3';
+    meas_name_suffix = '_MID00292_FID54953_YJ_seq3';
     hc_name_suffix = ' ';
     bc_name_suffix = ' ';
     nShot=987;
-    seqName = "seq3_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap1_Shot987.seq";
+    seqName = "yj_seq3_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap1_Shot987.seq";
 elseif subject_num == 4
-    meas_name_suffix = '_MID00210_FID315304_t1w_seq4';
+    meas_name_suffix = '_MID00293_FID54954_YJ_seq4';
     hc_name_suffix = ' ';
     bc_name_suffix = ' ';
     nShot=987;
-    seqName = "seq4_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap1_Shot987_BW2.seq";
+    seqName = "yj_seq4_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap1_Shot987_BW2.seq";
 elseif subject_num == 5
-    meas_name_suffix = '_MID00207_FID315301_t1w_seq5';
+    meas_name_suffix = '_MID00294_FID54955_YJ_seq5';
     hc_name_suffix = ' ';
     bc_name_suffix = ' ';
     nShot=987;
-    seqName = "seq5_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap1_Shot987_FOV240_osR1.seq";
+    seqName = "yj_seq5_t1w_libre_part_TR6.2ms_TE3.6ms_swap1_FA4_RF2_overlap1_Shot987_FOV240_osR1.seq";
 end
 
 
@@ -70,7 +70,7 @@ bodyCoilFile = [datasetDir, bc_name,'.dat'];
 arrayCoilFile = [datasetDir, hc_name,'.dat'];
 
 
-%% Load and Configure Data
+% Load and Configure Data
 
 reader = createRawDataReader(measureFile, false);
 % Acquisition from Bern need to manually define the following part!!
@@ -99,7 +99,7 @@ ve_tot = bmVolumeElement(t_tot, 'voronoi_full_radial3');  % Volume elements
 % Warning: due to the memory limit, make sure the matrix size <=240
 matrix_size = 240;  % Max nominal spatial resolution
 N_u = [matrix_size, matrix_size, matrix_size];
-dK_u = [1, 1, 1]./p.FoV;
+dK_u = [1, 1, 1]./240;
 
 % ------
 nCh = size(y_tot, 1);
@@ -131,7 +131,9 @@ x0Path = fullfile(x0Dir, 'x0.mat');
 % Save the x0 to the .mat file
 save(x0Path, 'x0', '-v7.3');
 disp('x0 has been saved here:')
-disp(x0Path)
+disp(x0Path);
+%
+
 % Root mean square across the channels
 % Initialize an array to store sum of squared images
 [nx, ny, nz] = size(x0{1});  % Get the dimensions (240,240,240)
@@ -146,6 +148,7 @@ end
 
 % Compute the root mean square (RMS)
 xrms = sqrt(sum_of_squares / numCoils);  % Normalize by the number of coils
+
 xrmsPath = fullfile(x0Dir, 'xrms.mat');
 
 % Save the x0 to the .mat file
@@ -156,3 +159,4 @@ disp(xrmsPath)
 bmImage(xrms)
 
 
+end
