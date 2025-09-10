@@ -24,14 +24,14 @@ addpath(genpath('/Users/cag/Documents/forclone/monalisa'));
 
 
 %% Initialize the directories and acquire the Coil
-subject_num = 2;
+subject_num = 6;
 use_C = 0;
 %
 datasetDir = '/Users/cag/Documents/Dataset/datasets/250829/';
 reconDir = '/Users/cag/Documents/Dataset/recon_results/250829/';
 
 mask_note_list={'swap1_FA4_RF2','swap1_FA8_RF2', ...
-    'swap1_FA4_RF2_freqPos', 'swap1_FA16_RF2.seq', 'swap0_FA4_RF2.seq', 'idea'};
+    'swap1_FA4_RF2_freqPos', 'swap1_FA16_RF2.seq', 'swap0_FA4_RF2.seq', 'idea_240'};
 
 mask_note = mask_note_list{subject_num};
 
@@ -188,24 +188,14 @@ p.nSeg = 22; % in case no validation UI
 y_tot = reader.readRawData(true, true);  % Filter nshotoff and SI
 t_tot = bmTraj(p);                       % Compute trajectory
 
-
 ve_tot = bmVolumeElement(t_tot, 'voronoi_full_radial3');  % Volume elements
-
-% Adjust grid size for coil sensitivity maps
-
-
-% ==============================================
-% Warning: due to the memory limit, all the voxel_size set on debi
-% is always >= 1 to make sure the matrix size <=240
-
-voxel_size = 2;
 
 % So the mitosius saved on debi
 % is the smaller than the full resolution.
 % ===============================================
-matrix_size = round(p.FoV/voxel_size);  % Max nominal spatial resolution
+matrix_size = 240;  % Max nominal spatial resolution
 N_u = [matrix_size, matrix_size, matrix_size];
-dK_u = [1, 1, 1]./p.FoV;
+dK_u = [1, 1, 1]./240;
 end
 
 if use_C
